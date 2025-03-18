@@ -46,7 +46,7 @@ const Login = () => {
           resetForm();
 
           setUserInfo(res?.data?.user);
-          navigate("/dashboard");
+          navigate("/dashboard", { replace: true });
           await getAllNotesOfUser();
           toast.success(res?.data?.message);
         }
