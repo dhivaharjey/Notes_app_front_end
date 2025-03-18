@@ -9,19 +9,19 @@ export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null);
 
   const navigate = useNavigate();
-  let searchNote;
   const fetchUser = async () => {
     try {
       const res = await getUser();
       if (res?.data?.user) {
-        setUserInfo(() => {
+        setUserInfo(
           // Initially we updating the setUserInfo in login page because after login searchbar and navbar only will appear if userInfo is available after  that every refresh the page it will check-auth update the userInfo on every m
-          return res.data.user;
-        });
+          res.data.user
+        );
       }
     } catch (error) {
       console.log("User not logged in");
       setUserInfo(null);
+      navigate("/");
     }
   };
   useEffect(() => {

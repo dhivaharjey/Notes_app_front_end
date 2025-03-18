@@ -12,10 +12,12 @@ import { MdWarning } from "react-icons/md";
 import { toast } from "react-toastify";
 import { useAppContext } from "../../../context/AuthContext";
 import Loader from "../../../components/Theme/Loader/Loader";
+import { useNoteContext } from "../../../context/NoteProvider";
 
 const Login = () => {
   const [error, setError] = useState(null);
-  const { userInfo, setUserInfo, fetchUser } = useAppContext();
+  const { setUserInfo } = useAppContext();
+  const { getAllNotesOfUser } = useNoteContext();
   const navigate = useNavigate();
   const initialValues = {
     email: "",
@@ -44,7 +46,7 @@ const Login = () => {
           resetForm();
 
           setUserInfo(res?.data?.user);
-
+          await getAllNotesOfUser();
           navigate("/dashboard", { replace: true });
           toast.success(res?.data?.message);
         }

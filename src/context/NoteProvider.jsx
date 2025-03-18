@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { axiosInstance } from "../Utils/axiosInstance";
 import { toast } from "react-toastify";
+import { useAppContext } from "./AuthContext";
 
 const NoteContext = createContext();
 
@@ -10,6 +11,7 @@ const NoteProvider = ({ children }) => {
   const [allNotes, setAllNotes] = useState(null);
   const [isSearch, setIsSearch] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { userInfo } = useAppContext();
   const getAllNotesOfUser = async () => {
     setIsLoading(true);
     try {
@@ -37,7 +39,7 @@ const NoteProvider = ({ children }) => {
   };
   useEffect(() => {
     getAllNotesOfUser();
-  }, []);
+  }, [userInfo]);
   return (
     <NoteContext.Provider
       value={{
