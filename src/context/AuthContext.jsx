@@ -26,9 +26,9 @@ export const AuthProvider = ({ children }) => {
       setUserInfo(null);
       if (error?.response?.status === 401 || error?.response?.status === 403) {
         console.log("Clearing cookies and logging out");
-        await await axiosInstance.post("/auth/logout");
+        await axiosInstance.post("/auth/logout");
+        navigate("/");
       }
-      navigate("/");
     } finally {
       setLoading(false);
     }
@@ -44,9 +44,9 @@ export const AuthProvider = ({ children }) => {
   }, [loading, userInfo]);
   if (loading) {
     return (
-      <span className="flex justify-center">
+      <div className="h-dvh w-[100vw] flex items-center justify-center dark:bg-slate-700 ">
         <PageLoader />
-      </span>
+      </div>
     );
   }
   const logout = async () => {
