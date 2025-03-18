@@ -3,13 +3,16 @@ import { axiosInstance, getUser } from "../Utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import PageLoader from "../components/Theme/Page Loading/PageLoader";
+
 const AppContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const fetchUser = async () => {
+    setLoading(true);
     try {
       const res = await getUser();
       if (res?.data?.user) {
@@ -23,12 +26,23 @@ export const AuthProvider = ({ children }) => {
       console.log("User not logged in");
       setUserInfo(null);
       setTimeout(() => navigate("/"), 1000);
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
     console.log("useEffect is running on mount");
     fetchUser();
   }, []);
+  useEffect(() => {
+    if (!loading && !userInfo) {
+      logout();
+      navigate("/");
+    }
+  }, [loading, userInfo]);
+  if (loading) {
+    return <PageLoader />;
+  }
   const logout = async () => {
     try {
       const res = await axiosInstance.post("/auth/logout");

@@ -7,8 +7,9 @@ import Login from "./pages/Home/Login/Login";
 import SignUp from "./pages/Home/SignUp/SignUp";
 import { ToastContainer } from "react-toastify";
 import NotFound from "./components/Cards/NotFound";
-import Loader from "./components/Theme/Loader/Loader";
+
 import ProtectedRoute from "./context/ProtectedRoute";
+import PageLoader from "./components/Theme/Page Loading/PageLoader";
 
 // import Navbar from "./components/Navbar/Navbar";
 const Home = lazy(() => import("./pages/Home/Home"));
@@ -22,7 +23,7 @@ const App = () => {
       <Suspense
         fallback={
           <span className="flex justify-center">
-            <Loader />
+            <PageLoader />
           </span>
         }
       >
