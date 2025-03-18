@@ -31,7 +31,9 @@ const NoteProvider = ({ children }) => {
         error?.response?.data?.message ||
         error?.message ||
         "Something went wrong";
-      toast.error(errMsg);
+      if (userInfo) {
+        toast.error(errMsg);
+      }
       // setError(errMsg);
     } finally {
       setIsLoading(false);

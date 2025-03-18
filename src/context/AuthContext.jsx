@@ -17,11 +17,12 @@ export const AuthProvider = ({ children }) => {
           // Initially we updating the setUserInfo in login page because after login searchbar and navbar only will appear if userInfo is available after  that every refresh the page it will check-auth update the userInfo on every m
           res.data.user
         );
+        return;
       }
     } catch (error) {
       console.log("User not logged in");
       setUserInfo(null);
-      navigate("/");
+      setTimeout(() => navigate("/"), 1000);
     }
   };
   useEffect(() => {
