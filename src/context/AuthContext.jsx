@@ -9,10 +9,9 @@ const AppContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const fetchUser = async () => {
-    setLoading(true);
     try {
       const res = await getUser();
       if (res?.data?.user) {
@@ -25,7 +24,11 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.log("User not logged in");
       setUserInfo(null);
-      setTimeout(() => navigate("/"), 1000);
+      if (error?.response?.status === 401 || error?.response?.status === 403) {
+        console.log("Clearing cookies and logging out");
+        await await axiosInstance.post("/auth/logout");
+      }
+      navigate("/");
     } finally {
       setLoading(false);
     }
@@ -35,13 +38,16 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
   useEffect(() => {
-    if (!loading && !userInfo) {
-      logout();
-      navigate("/");
+    if (!loading && userInfo === null) {
+      navigate("/", { replace: true });
     }
   }, [loading, userInfo]);
   if (loading) {
-    return <PageLoader />;
+    return (
+      <span className="flex justify-center">
+        <PageLoader />
+      </span>
+    );
   }
   const logout = async () => {
     try {
