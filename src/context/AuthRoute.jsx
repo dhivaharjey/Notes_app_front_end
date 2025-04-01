@@ -3,7 +3,7 @@ import { useAppContext } from "./AuthContext";
 import { Navigate, Outlet } from "react-router-dom";
 import PageLoader from "../components/Theme/Page Loading/PageLoader";
 
-const ProtectedRoute = () => {
+const AuthRoute = () => {
   const { userInfo, loading } = useAppContext();
   if (loading && !userInfo) {
     return (
@@ -12,7 +12,7 @@ const ProtectedRoute = () => {
       </div>
     );
   }
-  return userInfo ? <Outlet /> : <Navigate to="/" replace />;
+  return !userInfo ? <Outlet /> : <Navigate to="/dashboard" replace />;
 };
 
-export default ProtectedRoute;
+export default AuthRoute;

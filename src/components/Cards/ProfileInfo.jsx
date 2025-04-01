@@ -4,13 +4,11 @@ import Theme from "../Theme/Theme";
 import { useNoteContext } from "../../context/NoteProvider";
 
 const ProfileInfo = () => {
-  const { setIsLoading } = useNoteContext();
   const [show, setShow] = useState(false);
   const { userInfo, logout } = useAppContext();
   const handleLogout = async () => {
-    setIsLoading((prev) => !prev);
+    // setUserInfo(null);
     await logout();
-    setIsLoading((prev) => !prev);
   };
   return (
     <div className="flex justify-center items-center gap-3 ">

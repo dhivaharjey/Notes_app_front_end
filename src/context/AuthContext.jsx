@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { axiosInstance, getUser } from "../Utils/axiosInstance";
-import { useNavigate } from "react-router-dom";
+
 import { toast } from "react-toastify";
 
 import PageLoader from "../components/Theme/Page Loading/PageLoader";
@@ -10,38 +10,34 @@ const AppContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+
   const fetchUser = async () => {
     try {
       const res = await getUser();
       if (res?.data?.user) {
-        setUserInfo(
-          // Initially we updating the setUserInfo in login page because after login searchbar and navbar only will appear if userInfo is available after  that every refresh the page it will check-auth update the userInfo on every m
-          res.data.user
-        );
+        // Initially we updating the setUserInfo in login page because after login searchbar and navbar only will appear if userInfo is available after  that every refresh the page it will check-auth update the userInfo on every m
+        if (!userInfo || userInfo._id !== res.data.user._id) {
+          setUserInfo(res.data.user);
+        }
         return;
       }
     } catch (error) {
-      console.log("User not logged in");
-      setUserInfo(null);
+      // console.log("User not logged in");
       if (error?.response?.status === 401 || error?.response?.status === 403) {
-        console.log("Clearing cookies and logging out");
+        // console.log("Clearing cookies and logging out");
+        setUserInfo(null);
         await axiosInstance.post("/auth/logout");
-        navigate("/");
       }
     } finally {
       setLoading(false);
     }
   };
   useEffect(() => {
-    console.log("useEffect is running on mount");
+    // console.log("useEffect is running on mount");
+    // if (!userInfo) return;
     fetchUser();
   }, []);
-  useEffect(() => {
-    if (!loading && userInfo === null) {
-      navigate("/", { replace: true });
-    }
-  }, [loading, userInfo]);
+
   if (loading) {
     return (
       <div className="h-dvh w-[100vw] flex items-center justify-center dark:bg-slate-700 ">
@@ -50,14 +46,16 @@ export const AuthProvider = ({ children }) => {
     );
   }
   const logout = async () => {
+    if (!userInfo) return;
+    setLoading(true);
     try {
       const res = await axiosInstance.post("/auth/logout");
-      if (res) {
+      if (res.status === 200) {
+        setUserInfo(null);
         toast.success(res?.data?.message || "Logged Out!!!");
 
         // localStorage.removeItem("userInfo");
-        setUserInfo(null);
-        navigate("/", { replace: true });
+        // navigate("/", { replace: true });
       }
     } catch (error) {
       toast.error(
@@ -65,6 +63,8 @@ export const AuthProvider = ({ children }) => {
           error?.messsage ||
           "Oops somethinf went wrong"
       );
+    } finally {
+      setLoading(false);
     }
   };
   // console.log(userInfo);
@@ -72,6 +72,7 @@ export const AuthProvider = ({ children }) => {
   return (
     <AppContext.Provider
       value={{
+        loading,
         userInfo,
         logout,
         setUserInfo,
